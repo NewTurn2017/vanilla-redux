@@ -1,38 +1,48 @@
 import { createStore } from 'redux'
 
-const ADD = 'ADD'
-const MINUS = 'MINUS'
+const todoForm = document.getElementById('todoForm')
+const todoInput = document.getElementById('todoInput')
+const todoList = document.getElementById('todoList')
 
-const add = document.getElementById('add')
-const minus = document.getElementById('minus')
-const number = document.querySelector('span')
+const ADD_TODO = 'ADD_TODO'
+const DELETE_TODO = 'DELETE_TODO'
 
-const countModifier = (count = 0, action) => {
+const reducer = (state = [], action) => {
   switch (action.type) {
-    case ADD:
-      return count + 1
-    case MINUS:
-      return count - 1
+    case ADD_TODO:
+      return [{ text: action.text, id: action.id }, ...state]
+    case DELETE_TODO:
+      return state.filter((todo) => todo.id !== action.id)
     default:
-      return count
+      return state
   }
 }
+const store = createStore(reducer)
 
-const countStore = createStore(countModifier)
-
-const onChange = () => {
-  number.innerText = countStore.getState()
+const render = () => {
+  const state = store.getState()
+  todoList.innerHTML = ''
+  state.forEach((todo) => {
+    const li = document.createElement('li')
+    const button = document.createElement('button')
+    button.innerText = 'DEL'
+    button.addEventListener('click', () => {
+      store.dispatch({ type: DELETE_TODO, id: todo.id })
+    })
+    li.innerText = todo.text
+    li.appendChild(button)
+    todoList.appendChild(li)
+  })
 }
 
-countStore.subscribe(onChange)
+store.subscribe(render)
 
-const handleAdd = () => {
-  countStore.dispatch({ type: ADD })
+const onSubmit = (e) => {
+  e.preventDefault()
+  const todo = todoInput.value
+  todoInput.value = ''
+  const id = Date.now().toString() // Use the current timestamp as a unique id
+  store.dispatch({ type: ADD_TODO, text: todo, id: id })
 }
 
-const handleMinus = () => {
-  countStore.dispatch({ type: MINUS })
-}
-
-add.addEventListener('click', handleAdd)
-minus.addEventListener('click', handleMinus)
+todoForm.addEventListener('submit', onSubmit)

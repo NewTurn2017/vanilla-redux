@@ -13,11 +13,13 @@
 
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
-    <title>Vanilla Redux</title>
+    <title>Simple Todo List</title>
   </head>
   <body>
-    <button id="add">Add</button>
-    <span>0</span>
-    <button id="minus">Minus</button>
+    <form id="todoForm">
+      <input type="text" id="todoInput" placeholder="Enter a task..." />
+      <button type="submit">Add</button>
+    </form>
+    <ul id="todoList"></ul>
   </body>
 </html>
